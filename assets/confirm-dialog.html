@@ -1,0 +1,134 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Confirm Action</title>
+    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+    <style>
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background: white;
+        overflow: hidden;
+      }
+
+      .dialog-container {
+        max-width: 320px;
+        width: 100%;
+        padding-bottom: 8px;
+      }
+
+      .dialog-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 24px;
+      }
+
+      .icon-container {
+        flex-shrink: 0;
+        width: 40px;
+        height: 40px;
+        background-color: #fef3c7;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .warning-icon {
+        color: #d97706;
+        font-size: 24px;
+        font-weight: bold;
+      }
+
+      .dialog-content h2 {
+        margin: 0 0 8px 0;
+        font-size: 18px;
+        font-weight: 600;
+        color: #1f2937;
+      }
+
+      .dialog-content p {
+        margin: 0;
+        font-size: 14px;
+        color: #6b7280;
+        line-height: 1.5;
+      }
+
+      .button-container {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        margin-top: 32px;
+      }
+
+      button {
+        padding: 10px 20px;
+        font-size: 14px;
+        font-weight: 500;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .cancel-button {
+        background-color: #f3f4f6;
+        color: #374151;
+      }
+
+      .cancel-button:hover {
+        background-color: #e5e7eb;
+      }
+
+      .confirm-button {
+        background-color: #0f783f;
+        color: white;
+      }
+
+      .confirm-button:hover {
+        background-color: #0d6735;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="dialog-container">
+      <div class="dialog-header">
+        <div class="icon-container">
+          <span class="warning-icon">⚠</span>
+        </div>
+        <div class="dialog-content">
+          <h2 id="dialog-title">Confirm Action</h2>
+          <p id="dialog-message">Are you sure you want to proceed?</p>
+        </div>
+      </div>
+      <div class="button-container">
+        <button class="cancel-button" onclick="sendMessage('cancel')">Cancel</button>
+        <button class="confirm-button" onclick="sendMessage('confirmed')">Continue</button>
+      </div>
+    </div>
+
+    <script>
+      // Send result back to parent Office Add-in
+      function sendMessage(result) {
+        Office.context.ui.messageParent(result);
+      }
+
+      // Dynamically set title and message from URL parameters
+      const params = new URLSearchParams(window.location.search);
+      const title = params.get("title");
+      const message = params.get("message");
+
+      if (title) document.getElementById("dialog-title").innerText = title;
+      if (message) document.getElementById("dialog-message").innerText = message;
+    </script>
+  </body>
+</html>

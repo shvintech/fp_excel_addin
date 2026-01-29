@@ -1,0 +1,225 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fetch Records</title>
+    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+    <style>
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background: white;
+        overflow: hidden;
+      }
+
+      .dialog-container {
+        max-width: 600px;
+        width: 100%;
+        padding: 20px;
+      }
+
+      .dialog-header h2 {
+        margin: 0 0 20px 0;
+        font-size: 18px;
+        font-weight: 600;
+        color: #1f2937;
+      }
+
+      .selects-container {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 24px;
+      }
+
+      select {
+        flex: 1;
+        padding: 8px 12px;
+        font-size: 14px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        background: white;
+      }
+
+      select:focus {
+        outline: none;
+        border-color: #0f783f;
+      }
+
+      .button-container {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+      }
+
+      button {
+        padding: 10px 20px;
+        font-size: 14px;
+        font-weight: 500;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .cancel-button {
+        background-color: #f3f4f6;
+        color: #374151;
+      }
+
+      .cancel-button:hover {
+        background-color: #e5e7eb;
+      }
+
+      .ok-button {
+        background-color: #0f783f;
+        color: white;
+      }
+
+      .ok-button:hover {
+        background-color: #0d6735;
+      }
+
+      .ok-button:disabled {
+        background-color: #d1d5db;
+        cursor: not-allowed;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="dialog-container">
+      <div class="dialog-header">
+        <h2>Fetch Records</h2>
+      </div>
+      <div class="selects-container">
+        <select id="typeSelect">
+          <option value="">Table Types</option>
+        </select>
+        <select id="tableSelect" disabled>
+          <option value="">Table Names</option>
+        </select>
+        <select id="operationSelect" disabled>
+          <option value="">Records</option>
+          <option value="get_active">Active</option>
+          <option value="get_inactive">Inactive</option>
+          <option value="get_all">All</option>
+        </select>
+      </div>
+      <div class="button-container">
+        <button class="cancel-button" onclick="sendMessage('cancel')">Cancel</button>
+        <button class="ok-button" id="okButton" onclick="sendSelections()" disabled>Ok</button>
+      </div>
+    </div>
+
+    <script>
+      let groupedData = {};
+      let types = [];
+
+      Office.onReady(() => {
+        Office.context.ui.messageParent("dialog-ready");
+
+        Office.context.ui.addHandlerAsync(Office.EventType.DialogParentMessageReceived, (arg) => {
+          try {
+            const data = JSON.parse(arg.message);
+            types = data.types || [];
+            groupedData = data.groupedData || {};
+
+            populateTypeSelect();
+          } catch (error) {
+            console.error("Error parsing message:", error);
+          }
+        });
+      });
+
+      function populateTypeSelect() {
+        const typeSelect = document.getElementById("typeSelect");
+        typeSelect.innerHTML = '<option value="">Table Types</option>';
+        types.forEach((type) => {
+          const option = document.createElement("option");
+          option.value = type;
+          option.textContent = toInitCapsFromSnake(type);
+          typeSelect.appendChild(option);
+        });
+      }
+
+      function toInitCapsFromSnake(text) {
+        return text
+          .split("_")
+          .filter(Boolean)
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+          .join(" ");
+      }
+
+      document.getElementById("typeSelect").addEventListener("change", function () {
+        const selectedType = this.value;
+        const tableSelect = document.getElementById("tableSelect");
+        const operationSelect = document.getElementById("operationSelect");
+        const okButton = document.getElementById("okButton");
+
+        if (selectedType) {
+          const tables = groupedData[selectedType] || [];
+          tableSelect.innerHTML = '<option value="">Table Names</option>';
+          tables.forEach((table) => {
+            const option = document.createElement("option");
+            option.value = table.table_name;
+            option.textContent = toInitCapsFromSnake(table.table_name);
+            tableSelect.appendChild(option);
+          });
+          tableSelect.disabled = false;
+          operationSelect.disabled = true;
+          operationSelect.value = "";
+          okButton.disabled = true;
+        } else {
+          tableSelect.disabled = true;
+          tableSelect.innerHTML = '<option value="">Table Names</option>';
+          operationSelect.disabled = true;
+          operationSelect.value = "";
+          okButton.disabled = true;
+        }
+      });
+
+      document.getElementById("tableSelect").addEventListener("change", function () {
+        const operationSelect = document.getElementById("operationSelect");
+        const okButton = document.getElementById("okButton");
+
+        if (this.value) {
+          operationSelect.disabled = false;
+          okButton.disabled = true;
+        } else {
+          operationSelect.disabled = true;
+          operationSelect.value = "";
+          okButton.disabled = true;
+        }
+      });
+
+      document.getElementById("operationSelect").addEventListener("change", function () {
+        const okButton = document.getElementById("okButton");
+        okButton.disabled = !this.value;
+      });
+
+      function sendMessage(message) {
+        Office.context.ui.messageParent(message);
+      }
+
+      function sendSelections() {
+        const selectedType = document.getElementById("typeSelect").value;
+        const selectedTable = document.getElementById("tableSelect").value;
+        const selectedOperation = document.getElementById("operationSelect").value;
+
+        sendMessage(
+          JSON.stringify({
+            selectedType,
+            selectedTable,
+            selectedOperation,
+          })
+        );
+      }
+    </script>
+  </body>
+</html>
