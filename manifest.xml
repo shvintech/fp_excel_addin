@@ -3,7 +3,7 @@
 <!--
   PRODUCTION MANIFEST
   Replace YOUR_VERCEL_DOMAIN with your actual Vercel deployment URL
-  e.g., https://fp-excel-addin.vercel.app
+  e.g., fp-exceladdin-dev.shvintech.com 
 -->
 <OfficeApp
   xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
