@@ -4,7 +4,7 @@ import devCerts from "office-addin-dev-certs";
 import { resolve } from "path";
 import { copyFileSync } from "fs";
 
-export default defineConfig(async () => {
+export default defineConfig(async ({ command }) => {
   return {
     plugins: [
       react(),
@@ -30,7 +30,7 @@ export default defineConfig(async () => {
     publicDir: "assets",
 
     server: {
-      https: await devCerts.getHttpsServerOptions(),
+      https: command === "serve" ? await devCerts.getHttpsServerOptions() : undefined,
       port: 3000,
       host: "localhost",
       open: false,
