@@ -5,8 +5,9 @@ export const toastMessageDialog = (type: string, message: string): Promise<Offic
     const encodedType = encodeURIComponent(type);
     const encodedMessage = encodeURIComponent(message);
 
+    const url = `${window.location.origin}/toastMessage.html?type=${encodedType}&msg=${encodedMessage}`;
     Office.context.ui.displayDialogAsync(
-      `https://fp-exceladdin-dev.shvintech.com/toastMessage.html?type=${encodedType}&msg=${encodedMessage}`,
+      url,
       { height: 40, width: 50 },
       (asyncResult) => {
         if (asyncResult.status === Office.AsyncResultStatus.Succeeded) {

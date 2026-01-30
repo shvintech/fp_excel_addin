@@ -39,7 +39,7 @@ export default defineConfig(async ({ command }) => {
       },
     ],
 
-    
+
     base: "/",
 
     publicDir: "assets",
