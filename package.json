@@ -23,7 +23,8 @@
     "validate": "office-addin-manifest validate manifest.xml",
     "signin": "office-addin-dev-settings m365-account login",
     "signout": "office-addin-dev-settings m365-account logout",
-    "format": "prettier . --write"
+    "format": "prettier . --write",
+    "vercel-build": "vite build"
   },
   "dependencies": {
     "@fluentui/react-components": "^9.55.1",
