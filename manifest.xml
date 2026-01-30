@@ -1,5 +1,10 @@
 
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  PRODUCTION MANIFEST
+  Replace YOUR_VERCEL_DOMAIN with your actual Vercel deployment URL
+  e.g., fp-exceladdin-dev.shvintech.com 
+-->
 <OfficeApp
   xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -9,11 +14,11 @@
 
   <Id>0066347d-8880-4360-ab9a-5876484e3162</Id>
   <Version>1.0.0.0</Version>
-  <ProviderName>Contoso</ProviderName>
+  <ProviderName>Shvintech</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
 
-  <DisplayName DefaultValue="Excel Add-in"/>
-  <Description DefaultValue="React + Vite Excel Add-in"/>
+  <DisplayName DefaultValue="Freight Pricer"/>
+  <Description DefaultValue="Freight Pricer Excel Add-in"/>
 
   <IconUrl DefaultValue="https://localhost:3000/assets/icon-32.png"/>
   <HighResolutionIconUrl DefaultValue="https://localhost:3000/assets/icon-64.png"/>
@@ -75,7 +80,7 @@
       </bt:Urls>
 
       <bt:ShortStrings>
-        <bt:String id="CommandsGroup.Label" DefaultValue="Commands"/>
+        <bt:String id="CommandsGroup.Label" DefaultValue="Freight Pricer"/>
         <bt:String id="TaskpaneButton.Label" DefaultValue="Show Taskpane"/>
       </bt:ShortStrings>
 
