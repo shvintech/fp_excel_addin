@@ -1,10 +1,24 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import devCerts from "office-addin-dev-certs";
 import { resolve } from "path";
 import { copyFileSync } from "fs";
 
-export default defineConfig(async () => {
+async function getHttpsOptions() {
+  const isCI = process.env.CI || process.env.VERCEL; // Check for CI/Vercel environment
+  if (isCI) {
+    return undefined;
+  }
+
+  try {
+    const devCerts = await import("office-addin-dev-certs");
+    return await devCerts.getHttpsServerOptions();
+  } catch (error) {
+    console.warn("Unable to load HTTPS options from office-addin-dev-certs:", error);
+    return undefined;
+  }
+}
+
+export default defineConfig(async ({ command }) => {
   return {
     plugins: [
       react(),
@@ -25,12 +39,13 @@ export default defineConfig(async () => {
       },
     ],
 
+
     base: "/",
 
     publicDir: "assets",
 
     server: {
-      https: await devCerts.getHttpsServerOptions(),
+      https: command === "serve" ? await getHttpsOptions() : undefined,
       port: 3000,
       host: "localhost",
       open: false,
